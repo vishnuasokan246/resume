@@ -4,167 +4,121 @@
 <meta charset="UTF-8">
 <title>Vishnu Asokan | Frontend Developer</title>
 <style>
-/* GENERAL STYLES */
-* { box-sizing: border-box; margin:0; padding:0; }
-body, html { width:100%; height:100%; font-family: Arial, sans-serif; overflow: hidden; background: #0f0f14; color: #eaeaea; }
-
-/* PARTICLES */
-.particle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: rgba(255,77,109,0.6);
-  border-radius: 50%;
-  animation: float linear infinite;
-}
-@keyframes float {
-  from { transform: translateY(100vh); opacity:0; }
-  to { transform: translateY(-10vh); opacity:1; }
-}
-
-/* INTRO SCREEN */
-#intro {
-  position: absolute; top:0; left:0; width:100%; height:100%;
-  display:flex; flex-direction:column; justify-content:center; align-items:center;
-  background: linear-gradient(135deg,#1e1e2a,#0f0f14);
-  z-index:2;
-}
-#intro h1 {
-  font-size: 3rem; color:#ff4d6d;
-  animation: glow 2s infinite alternate;
-}
-#intro p {
-  color:#fff; margin-top:20px; font-size:1.2rem; opacity:0.9;
-}
-@keyframes glow {
-  from { text-shadow:0 0 5px #ff4d6d; }
-  to { text-shadow:0 0 20px #ff4d6d,0 0 30px #ff77aa; }
-}
-#intro span { margin-top:40px; font-size:0.9rem; color:#aaa; }
-
-/* SECTION SELECTION (like character select) */
-#menu {
-  display:none; flex-direction:column; align-items:center; justify-content:center;
-  height:100%; width:100%;
-}
-.menu-btn {
-  background:#1a1a24; color:#ff4d6d; border:none; padding:15px 40px;
-  margin:12px; border-radius:25px; font-size:1.2rem; cursor:pointer;
-  transition: all 0.3s ease;
-}
-.menu-btn:hover {
-  background:#ff4d6d; color:#fff; transform: scale(1.1);
-}
-
-/* CONTENT SECTIONS */
-section {
-  display:none; max-width:900px; margin:auto; padding:60px 20px; text-align:center;
-}
-section.active { display:block; animation: fadeIn 1s ease forwards; }
-@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-
-/* SKILLS */
-.skills span {
-  display:inline-block; background:#1e1e2a; padding:8px 14px; border-radius:20px; margin:6px;
-}
-
-/* PROJECT */
-.project { background:#1a1a24; padding:20px; border-radius:12px; margin-bottom:20px; }
-
-/* FOOTER */
-footer { text-align:center; padding:30px; font-size:0.9rem; opacity:0.6; }
-
-/* HOVER & CURSOR */
-body { cursor: default; }
+  html, body { margin:0; padding:0; overflow:hidden; font-family: Arial, sans-serif; }
+  canvas { display:block; }
+  /* Overlay text for portfolio sections */
+  .overlay {
+    position: absolute;
+    top:50%; left:50%;
+    transform: translate(-50%, -50%);
+    color: #ff4d6d;
+    text-align:center;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .overlay h1 { font-size: 3rem; margin-bottom: 10px; }
+  .overlay p { font-size: 1.2rem; opacity:0.8; }
 </style>
 </head>
-
 <body>
 
-<!-- PARTICLES CONTAINER -->
-<div id="particles"></div>
-
-<!-- INTRO SCREEN -->
-<div id="intro">
+<div class="overlay" id="overlay">
   <h1>Welcome to the New World</h1>
-  <p>Click anywhere or press Enter to start</p>
-  <span>Frontend Developer | Vishnu Asokan</span>
+  <p>Frontend Developer | Vishnu Asokan</p>
 </div>
 
-<!-- MENU / SECTION SELECT -->
-<div id="menu">
-  <button class="menu-btn" data-section="about">About Me</button>
-  <button class="menu-btn" data-section="projects">Projects</button>
-  <button class="menu-btn" data-section="contact">Contact</button>
-</div>
-
-<!-- ABOUT SECTION -->
-<section id="about">
-  <h3>About Me</h3>
-  <p>
-    After completing my BCA, I focused on building real-world frontend projects,
-    improving my HTML, CSS, and JavaScript skills, and deploying professional interactive apps.
-  </p>
-</section>
-
-<!-- PROJECTS SECTION -->
-<section id="projects">
-  <h3>Projects</h3>
-  <div class="project">
-    <h4>Interactive Valentine Web App</h4>
-    <p>A frontend project with animations, interactive UI, and event handling.</p>
-    <a href="#">Live Demo</a> | <a href="#">GitHub</a>
-  </div>
-  <div class="project">
-    <h4>More Projects Coming</h4>
-    <p>CRUD apps, API tools, and real-world frontend projects in progress.</p>
-  </div>
-</section>
-
-<!-- CONTACT SECTION -->
-<section id="contact">
-  <h3>Contact</h3>
-  <p>Email: <a href="mailto:vishnuasokan236@gmail.com">vishnuasokan236@gmail.com</a></p>
-</section>
-
-<footer>
-  © 2026 Vishnu Asokan
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.2/gsap.min.js"></script>
 <script>
-// PARTICLES GENERATOR
-const particles = document.getElementById('particles');
-for(let i=0;i<40;i++){
-  const dot=document.createElement('div');
-  dot.className='particle';
-  dot.style.left=Math.random()*100+'vw';
-  dot.style.animationDuration=10+Math.random()*20+'s';
-  dot.style.animationDelay=Math.random()*5+'s';
-  particles.appendChild(dot);
-}
+  let scene, camera, renderer;
+  let particleGroup = new THREE.Group();
 
-// INTRO SCREEN CLICK OR ENTER
-const intro = document.getElementById('intro');
-const menu = document.getElementById('menu');
-document.addEventListener('keydown', startIntro);
-document.addEventListener('click', startIntro);
-function startIntro(e){
-  if(e.type==='click' || e.key==='Enter'){
-    intro.style.display='none';
-    menu.style.display='flex';
+  init();
+  animate();
+
+  function init() {
+    // Scene
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0f0f14, 0.01);
+
+    // Camera
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(0,2,10);
+
+    // Renderer
+    renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Lights
+    const ambient = new THREE.AmbientLight(0xffffff,0.5);
+    scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0xffffff,0.8);
+    dirLight.position.set(5,10,7);
+    scene.add(dirLight);
+
+    // Ground plane (city floor)
+    const planeGeo = new THREE.PlaneGeometry(1000,1000);
+    const planeMat = new THREE.MeshPhongMaterial({color:0x111122});
+    const plane = new THREE.Mesh(planeGeo, planeMat);
+    plane.rotation.x = -Math.PI/2;
+    scene.add(plane);
+
+    // Add some cubes as buildings (pseudo-city)
+    for(let i=0;i<50;i++){
+      const geo = new THREE.BoxGeometry(Math.random()*2+1, Math.random()*5+2, Math.random()*2+1);
+      const mat = new THREE.MeshPhongMaterial({color: 0xff4d6d});
+      const cube = new THREE.Mesh(geo, mat);
+      cube.position.set((Math.random()-0.5)*50, geo.parameters.height/2, (Math.random()-0.5)*50);
+      scene.add(cube);
+    }
+
+    // Particles for VFX
+    for(let i=0;i<100;i++){
+      const dotGeo = new THREE.SphereGeometry(0.05,4,4);
+      const dotMat = new THREE.MeshBasicMaterial({color:0xff4d6d, transparent:true, opacity:0.6});
+      const dot = new THREE.Mesh(dotGeo, dotMat);
+      dot.position.set((Math.random()-0.5)*50, Math.random()*10+1, (Math.random()-0.5)*50);
+      particleGroup.add(dot);
+    }
+    scene.add(particleGroup);
+
+    // Start cinematic camera fly-through
+    gsap.to(camera.position, {duration:5, x:10, z:-20, y:5, onUpdate:updateOverlay, onComplete:showAbout});
   }
-}
 
-// MENU BUTTONS
-const buttons = document.querySelectorAll('.menu-btn');
-buttons.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-    const sec=document.getElementById(btn.dataset.section);
-    sec.classList.add('active');
-    menu.style.display='none'; // hide menu after selection
+  function updateOverlay(){
+    // Could fade overlay as camera moves
+    document.getElementById('overlay').style.opacity = 1 - camera.position.z/20;
+  }
+
+  function showAbout(){
+    document.getElementById('overlay').innerHTML = "<h1>About Me</h1><p>After BCA, I built real-world frontend projects, improving HTML, CSS, JS skills.</p>";
+    gsap.to(camera.position, {duration:5, x:-10, z:-40, y:6, onComplete:showProjects});
+  }
+
+  function showProjects(){
+    document.getElementById('overlay').innerHTML = "<h1>Projects</h1><p>Interactive Valentine Web App + more projects coming soon.</p>";
+    gsap.to(camera.position, {duration:5, x:0, z:-60, y:7, onComplete:showContact});
+  }
+
+  function showContact(){
+    document.getElementById('overlay').innerHTML = "<h1>Contact</h1><p>Email: <a href='mailto:vishnuasokan236@gmail.com' style='color:#ff77aa;'>vishnuasokan236@gmail.com</a></p>";
+    gsap.to(camera.position, {duration:5, x:0, z:-80, y:8});
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    // Rotate particles slowly
+    particleGroup.rotation.y += 0.001;
+    renderer.render(scene,camera);
+  }
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
   });
-});
 </script>
 
 </body>
