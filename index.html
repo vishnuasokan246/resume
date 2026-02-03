@@ -7,16 +7,49 @@
 <style>
 * { box-sizing: border-box; }
 
+/* BODY */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #0f0f14;
   color: #eaeaea;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
+/* BACKGROUND ANIMATION */
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+.dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 77, 109, 0.6);
+  border-radius: 50%;
+  animation: float 15s linear infinite;
+}
+@keyframes float {
+  from {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-10vh);
+    opacity: 1;
+  }
+}
+
+/* LINKS */
 a { color: #ff4d6d; text-decoration: none; }
 
+/* SECTIONS */
 section {
   padding: 60px 20px;
   max-width: 900px;
@@ -30,7 +63,6 @@ section {
 }
 .hero h1 {
   font-size: 2.8rem;
-  margin-bottom: 10px;
 }
 .hero h2 {
   color: #ff4d6d;
@@ -38,11 +70,10 @@ section {
 }
 .hero p {
   margin-top: 20px;
-  font-size: 1.1rem;
   opacity: 0.9;
 }
 
-/* SECTION TITLES */
+/* TITLES */
 h3 {
   margin-bottom: 20px;
   border-left: 4px solid #ff4d6d;
@@ -66,20 +97,6 @@ h3 {
   border-radius: 12px;
   margin-bottom: 20px;
 }
-.project h4 {
-  margin: 0 0 10px;
-}
-.project p {
-  opacity: 0.85;
-}
-.project a {
-  margin-right: 15px;
-}
-
-/* CONTACT */
-.contact p {
-  font-size: 1.05rem;
-}
 
 /* FOOTER */
 footer {
@@ -93,12 +110,15 @@ footer {
 
 <body>
 
+<!-- BACKGROUND -->
+<div class="bg" id="bg"></div>
+
 <!-- HERO -->
 <section class="hero">
   <h1>Vishnu Asokan</h1>
   <h2>Frontend Developer</h2>
   <p>
-    BCA graduate focused on building real-world, interactive web applications  
+    BCA graduate focused on building real-world, interactive web applications
     using HTML, CSS, and JavaScript.
   </p>
 </section>
@@ -109,8 +129,8 @@ footer {
   <p>
     After completing my BCA, I focused on strengthening my practical development
     skills by building and deploying real-world frontend projects.
-    I enjoy creating clean, interactive user interfaces and continuously
-    improving my problem-solving abilities through hands-on work.
+    I enjoy creating clean, interactive user interfaces and improving through
+    hands-on work.
   </p>
 </section>
 
@@ -134,32 +154,47 @@ footer {
   <div class="project">
     <h4>Interactive Valentine Web App</h4>
     <p>
-      A fun interactive web application with animated UI, dynamic button
-      behavior, and user interaction tracking. Built using pure HTML, CSS,
-      and JavaScript.
+      An interactive frontend project with animations, dynamic UI behavior,
+      and event handling using pure HTML, CSS, and JavaScript.
     </p>
-    <a href="#" target="_blank">Live Demo</a>
-    <a href="#" target="_blank">GitHub</a>
+    <a href="#">Live Demo</a> |
+    <a href="#">GitHub</a>
   </div>
 
   <div class="project">
-    <h4>Coming Soon</h4>
+    <h4>More Projects Coming</h4>
     <p>
-      More real-world projects including CRUD apps and API-based tools
-      are currently under development.
+      CRUD applications and API-based tools currently under development.
     </p>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section class="contact">
+<section>
   <h3>Contact</h3>
-  <p>Email: <a href="mailto:vishnuasokan236@gmail.com">vishnuasokan236@gmail.com</a></p>
+  <p>Email:
+    <a href="mailto:vishnuasokan236@gmail.com">
+      vishnuasokan236@gmail.com
+    </a>
+  </p>
 </section>
 
 <footer>
   © 2026 Vishnu Asokan
 </footer>
+
+<script>
+/* CREATE FLOATING DOTS */
+const bg = document.getElementById("bg");
+for (let i = 0; i < 40; i++) {
+  const d = document.createElement("div");
+  d.className = "dot";
+  d.style.left = Math.random() * 100 + "vw";
+  d.style.animationDuration = 10 + Math.random() * 20 + "s";
+  d.style.animationDelay = Math.random() * 5 + "s";
+  bg.appendChild(d);
+}
+</script>
 
 </body>
 </html>
