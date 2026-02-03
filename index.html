@@ -3,180 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <title>Vishnu Asokan | Frontend Developer</title>
-
 <style>
-* { box-sizing: border-box; }
+/* GENERAL STYLES */
+* { box-sizing: border-box; margin:0; padding:0; }
+body, html { width:100%; height:100%; font-family: Arial, sans-serif; overflow: hidden; background: #0f0f14; color: #eaeaea; }
 
-/* BODY */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f0f14;
-  color: #eaeaea;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* BACKGROUND ANIMATION */
-.bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  overflow: hidden;
-}
-.dot {
+/* PARTICLES */
+.particle {
   position: absolute;
   width: 6px;
   height: 6px;
-  background: rgba(255, 77, 109, 0.6);
+  background: rgba(255,77,109,0.6);
   border-radius: 50%;
-  animation: float 15s linear infinite;
+  animation: float linear infinite;
 }
 @keyframes float {
-  from {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(-10vh);
-    opacity: 1;
-  }
+  from { transform: translateY(100vh); opacity:0; }
+  to { transform: translateY(-10vh); opacity:1; }
 }
 
-/* LINKS */
-a { color: #ff4d6d; text-decoration: none; }
+/* INTRO SCREEN */
+#intro {
+  position: absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  background: linear-gradient(135deg,#1e1e2a,#0f0f14);
+  z-index:2;
+}
+#intro h1 {
+  font-size: 3rem; color:#ff4d6d;
+  animation: glow 2s infinite alternate;
+}
+#intro p {
+  color:#fff; margin-top:20px; font-size:1.2rem; opacity:0.9;
+}
+@keyframes glow {
+  from { text-shadow:0 0 5px #ff4d6d; }
+  to { text-shadow:0 0 20px #ff4d6d,0 0 30px #ff77aa; }
+}
+#intro span { margin-top:40px; font-size:0.9rem; color:#aaa; }
 
-/* SECTIONS */
+/* SECTION SELECTION (like character select) */
+#menu {
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  height:100%; width:100%;
+}
+.menu-btn {
+  background:#1a1a24; color:#ff4d6d; border:none; padding:15px 40px;
+  margin:12px; border-radius:25px; font-size:1.2rem; cursor:pointer;
+  transition: all 0.3s ease;
+}
+.menu-btn:hover {
+  background:#ff4d6d; color:#fff; transform: scale(1.1);
+}
+
+/* CONTENT SECTIONS */
 section {
-  padding: 60px 20px;
-  max-width: 900px;
-  margin: auto;
+  display:none; max-width:900px; margin:auto; padding:60px 20px; text-align:center;
 }
-
-/* HERO */
-.hero {
-  text-align: center;
-  padding-top: 100px;
-}
-.hero h1 {
-  font-size: 2.8rem;
-}
-.hero h2 {
-  color: #ff4d6d;
-  font-weight: normal;
-}
-.hero p {
-  margin-top: 20px;
-  opacity: 0.9;
-}
-
-/* TITLES */
-h3 {
-  margin-bottom: 20px;
-  border-left: 4px solid #ff4d6d;
-  padding-left: 10px;
-}
+section.active { display:block; animation: fadeIn 1s ease forwards; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
 
 /* SKILLS */
 .skills span {
-  display: inline-block;
-  background: #1e1e2a;
-  padding: 8px 14px;
-  border-radius: 20px;
-  margin: 6px;
-  font-size: 0.9rem;
+  display:inline-block; background:#1e1e2a; padding:8px 14px; border-radius:20px; margin:6px;
 }
 
-/* PROJECTS */
-.project {
-  background: #1a1a24;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
+/* PROJECT */
+.project { background:#1a1a24; padding:20px; border-radius:12px; margin-bottom:20px; }
 
 /* FOOTER */
-footer {
-  text-align: center;
-  padding: 30px;
-  font-size: 0.9rem;
-  opacity: 0.6;
-}
+footer { text-align:center; padding:30px; font-size:0.9rem; opacity:0.6; }
+
+/* HOVER & CURSOR */
+body { cursor: default; }
 </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND -->
-<div class="bg" id="bg"></div>
+<!-- PARTICLES CONTAINER -->
+<div id="particles"></div>
 
-<!-- HERO -->
-<section class="hero">
-  <h1>Vishnu Asokan</h1>
-  <h2>Frontend Developer</h2>
-  <p>
-    BCA graduate focused on building real-world, interactive web applications
-    using HTML, CSS, and JavaScript.
-  </p>
-</section>
+<!-- INTRO SCREEN -->
+<div id="intro">
+  <h1>Welcome to the New World</h1>
+  <p>Click anywhere or press Enter to start</p>
+  <span>Frontend Developer | Vishnu Asokan</span>
+</div>
 
-<!-- ABOUT -->
-<section>
+<!-- MENU / SECTION SELECT -->
+<div id="menu">
+  <button class="menu-btn" data-section="about">About Me</button>
+  <button class="menu-btn" data-section="projects">Projects</button>
+  <button class="menu-btn" data-section="contact">Contact</button>
+</div>
+
+<!-- ABOUT SECTION -->
+<section id="about">
   <h3>About Me</h3>
   <p>
-    After completing my BCA, I focused on strengthening my practical development
-    skills by building and deploying real-world frontend projects.
-    I enjoy creating clean, interactive user interfaces and improving through
-    hands-on work.
+    After completing my BCA, I focused on building real-world frontend projects,
+    improving my HTML, CSS, and JavaScript skills, and deploying professional interactive apps.
   </p>
 </section>
 
-<!-- SKILLS -->
-<section>
-  <h3>Skills</h3>
-  <div class="skills">
-    <span>HTML5</span>
-    <span>CSS3</span>
-    <span>JavaScript</span>
-    <span>Responsive Design</span>
-    <span>Git & GitHub</span>
-    <span>Basic APIs</span>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section>
+<!-- PROJECTS SECTION -->
+<section id="projects">
   <h3>Projects</h3>
-
   <div class="project">
     <h4>Interactive Valentine Web App</h4>
-    <p>
-      An interactive frontend project with animations, dynamic UI behavior,
-      and event handling using pure HTML, CSS, and JavaScript.
-    </p>
-    <a href="#">Live Demo</a> |
-    <a href="#">GitHub</a>
+    <p>A frontend project with animations, interactive UI, and event handling.</p>
+    <a href="#">Live Demo</a> | <a href="#">GitHub</a>
   </div>
-
   <div class="project">
     <h4>More Projects Coming</h4>
-    <p>
-      CRUD applications and API-based tools currently under development.
-    </p>
+    <p>CRUD apps, API tools, and real-world frontend projects in progress.</p>
   </div>
 </section>
 
-<!-- CONTACT -->
-<section>
+<!-- CONTACT SECTION -->
+<section id="contact">
   <h3>Contact</h3>
-  <p>Email:
-    <a href="mailto:vishnuasokan236@gmail.com">
-      vishnuasokan236@gmail.com
-    </a>
-  </p>
+  <p>Email: <a href="mailto:vishnuasokan236@gmail.com">vishnuasokan236@gmail.com</a></p>
 </section>
 
 <footer>
@@ -184,16 +132,39 @@ footer {
 </footer>
 
 <script>
-/* CREATE FLOATING DOTS */
-const bg = document.getElementById("bg");
-for (let i = 0; i < 40; i++) {
-  const d = document.createElement("div");
-  d.className = "dot";
-  d.style.left = Math.random() * 100 + "vw";
-  d.style.animationDuration = 10 + Math.random() * 20 + "s";
-  d.style.animationDelay = Math.random() * 5 + "s";
-  bg.appendChild(d);
+// PARTICLES GENERATOR
+const particles = document.getElementById('particles');
+for(let i=0;i<40;i++){
+  const dot=document.createElement('div');
+  dot.className='particle';
+  dot.style.left=Math.random()*100+'vw';
+  dot.style.animationDuration=10+Math.random()*20+'s';
+  dot.style.animationDelay=Math.random()*5+'s';
+  particles.appendChild(dot);
 }
+
+// INTRO SCREEN CLICK OR ENTER
+const intro = document.getElementById('intro');
+const menu = document.getElementById('menu');
+document.addEventListener('keydown', startIntro);
+document.addEventListener('click', startIntro);
+function startIntro(e){
+  if(e.type==='click' || e.key==='Enter'){
+    intro.style.display='none';
+    menu.style.display='flex';
+  }
+}
+
+// MENU BUTTONS
+const buttons = document.querySelectorAll('.menu-btn');
+buttons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    const sec=document.getElementById(btn.dataset.section);
+    sec.classList.add('active');
+    menu.style.display='none'; // hide menu after selection
+  });
+});
 </script>
 
 </body>
