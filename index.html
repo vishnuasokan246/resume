@@ -1,151 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Vishnu Asokan | Cinematic Portfolio</title>
+<meta charset="UTF-8">
+<title>Vishnu Asokan | Cinematic 3D Portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{
+html,body{
   margin:0;
   padding:0;
-  box-sizing:border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
-html,body{
-  width:100%;
-  height:100%;
   overflow:hidden;
   background:#000;
 }
-
-/* SCENE CONTAINER */
-#scene{
-  width:100vw;
-  height:100vh;
-  position:relative;
-  cursor:pointer;
-}
-
-/* BACKGROUND CITY */
-.bg{
-  position:absolute;
-  width:120%;
-  height:120%;
-  background:
-    radial-gradient(circle at 20% 30%, #ff2a6d33, transparent 40%),
-    radial-gradient(circle at 80% 60%, #00f0ff33, transparent 40%),
-    linear-gradient(#020111, #050014);
-  animation: drift 20s linear infinite;
-}
-
-@keyframes drift{
-  0%{transform:translate(0,0) scale(1)}
-  100%{transform:translate(-5%, -5%) scale(1.1)}
-}
-
-/* TEXT */
-.text{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  color:#fff;
-  text-align:center;
-  opacity:0;
-  animation: fadeIn 2s forwards;
-}
-
-h1{
-  font-size:3rem;
-  letter-spacing:2px;
-}
-p{
-  margin-top:15px;
-  font-size:1.2rem;
-  color:#ccc;
-}
-
-@keyframes fadeIn{
-  to{opacity:1}
-}
-
-/* CINEMATIC FADE */
-.fade{
-  animation: fadeOut 1.2s forwards;
-}
-
-@keyframes fadeOut{
-  to{opacity:0}
-}
-
-/* FILM GRAIN */
-#grain{
-  pointer-events:none;
-  position:absolute;
+#overlay{
+  position:fixed;
   inset:0;
-  background:url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity:0.08;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-family:Segoe UI,sans-serif;
+  font-size:2.5rem;
+  letter-spacing:2px;
+  pointer-events:none;
+  transition:opacity 1s;
+}
+.fadeOut{opacity:0}
+#hint{
+  position:fixed;
+  bottom:40px;
+  width:100%;
+  text-align:center;
+  color:#aaa;
+  font-size:1rem;
 }
 </style>
 </head>
 
 <body>
 
-<div id="scene">
-  <div class="bg"></div>
-  <div class="text" id="text">
-    <h1>WELCOME</h1>
-    <p>Click to enter a new world</p>
-  </div>
-  <div id="grain"></div>
-</div>
+<div id="overlay">WELCOME TO A NEW WORLD</div>
+<div id="hint">Click / Tap to move forward</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
 <script>
-const scenes = [
-  {
-    title:"WELCOME",
-    desc:"Click to enter a new world"
-  },
-  {
-    title:"VISHNU ASOKAN",
-    desc:"Frontend Developer"
-  },
-  {
-    title:"THE CITY",
-    desc:"Ideas are built here"
-  },
-  {
-    title:"ABOUT",
-    desc:"BCA • Koshys Institute of Management Studies (2022–2025)"
-  },
-  {
-    title:"SKILLS",
-    desc:"HTML • CSS • JavaScript • UI Effects • GitHub"
-  },
-  {
-    title:"CONTACT",
-    desc:"vishnuasokan236@gmail.com"
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 10, 80);
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0,2,20);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+/* LIGHTS */
+scene.add(new THREE.AmbientLight(0x404040,1));
+
+const neonLight = new THREE.PointLight(0xff2a6d,2,50);
+neonLight.position.set(0,10,10);
+scene.add(neonLight);
+
+/* CITY */
+function createBuilding(x,z,h,color){
+  const geo = new THREE.BoxGeometry(2,h,2);
+  const mat = new THREE.MeshStandardMaterial({color});
+  const b = new THREE.Mesh(geo,mat);
+  b.position.set(x,h/2,z);
+  scene.add(b);
+}
+
+for(let z=-10; z>-200; z-=6){
+  for(let x=-12; x<=12; x+=6){
+    createBuilding(
+      x,
+      z,
+      Math.random()*10+4,
+      Math.random()>0.7 ? 0x00f0ff : 0x111111
+    );
   }
+}
+
+/* TEXT SCENES */
+const scenes = [
+  "WELCOME TO A NEW WORLD",
+  "VISHNU ASOKAN",
+  "FRONTEND DEVELOPER",
+  "BCA • KOSHYS INSTITUTE (2022–2025)",
+  "BUILDING DIGITAL EXPERIENCES",
+  "CONTACT: vishnuasokan236@gmail.com"
 ];
+let sceneIndex = 0;
 
-let index = 0;
-const textBox = document.getElementById("text");
-
-document.getElementById("scene").addEventListener("click", nextScene);
-
-function nextScene(){
-  textBox.classList.add("fade");
+/* CLICK CONTROL */
+window.addEventListener("click", ()=>{
+  camera.position.z -= 15;
+  document.getElementById("overlay").classList.add("fadeOut");
 
   setTimeout(()=>{
-    index = (index + 1) % scenes.length;
-    textBox.innerHTML = `
-      <h1>${scenes[index].title}</h1>
-      <p>${scenes[index].desc}</p>
-    `;
-    textBox.classList.remove("fade");
-  },1200);
+    sceneIndex = (sceneIndex+1) % scenes.length;
+    const o = document.getElementById("overlay");
+    o.innerText = scenes[sceneIndex];
+    o.classList.remove("fadeOut");
+  },1000);
+});
+
+/* ANIMATE */
+function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene,camera);
 }
+animate();
+
+window.addEventListener("resize", ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
 
 </body>
