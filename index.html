@@ -6,63 +6,56 @@
 <title>Cinematic Intro</title>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-  background: black;
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:'Poppins',sans-serif;
+  background:black;
 }
 
-/* Background */
-#bg {
-  position: fixed;
-  inset: 0;
-  background-size: 400% 400%;
-  animation: bgMove 3s ease-in-out infinite;
-  transition: background 0.45s ease;
+#bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  transform:scale(1.08);
+  transition:opacity .35s ease, transform .85s ease;
+  opacity:1;
 }
 
-/* Cinematic motion */
-@keyframes bgMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(
+.overlay{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(
     to bottom,
-    rgba(0,0,0,0.1),
-    rgba(0,0,0,0.45)
+    rgba(0,0,0,.12),
+    rgba(0,0,0,.45)
   );
-  z-index: 1;
+  z-index:1;
 }
 
-/* Text */
-.scene {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(3rem, 8vw, 8rem);
-  font-weight: 700;
-  letter-spacing: 0.25em;
-  color: white;
-  opacity: 0;
-  transform: scale(1.12);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-  z-index: 2;
+.scene{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(3rem,8vw,8rem);
+  font-weight:700;
+  letter-spacing:.25em;
+  color:white;
+  opacity:0;
+  transform:scale(1.12);
+  transition:opacity .45s ease, transform .45s ease;
+  z-index:2;
 }
 
-.scene.active {
-  opacity: 1;
-  transform: scale(1);
+.scene.active{
+  opacity:1;
+  transform:scale(1);
 }
 </style>
 </head>
@@ -88,24 +81,33 @@ html, body {
 const scenes = document.querySelectorAll('.scene');
 const bg = document.getElementById('bg');
 
+/* Illustrated / painted city art only */
 const backgrounds = [
-  "linear-gradient(120deg, #4facfe, #00f2fe)",      // Hi – global blue
-  "linear-gradient(120deg, #fbc2eb, #a18cd1)",      // Bonjour – Paris pastel
-  "linear-gradient(120deg, #f6d365, #fda085)",      // Hola – warm Spain
-  "linear-gradient(120deg, #667eea, #764ba2)",      // Konnichiwa – Tokyo neon
-  "linear-gradient(120deg, #43cea2, #185a9d)",      // Ola – Brazil coast
-  "linear-gradient(120deg, #f7971e, #ffd200)"       // Namaste – India gold
+  "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=1920&q=80", // Global city illustration
+  "https://images.unsplash.com/photo-1619983081593-e2ba5b543168?auto=format&fit=crop&w=1920&q=80", // Paris art
+  "https://images.unsplash.com/photo-1619983090163-7c7c86f51d52?auto=format&fit=crop&w=1920&q=80", // Spain art
+  "https://images.unsplash.com/photo-1622737133809-d95047b9e673?auto=format&fit=crop&w=1920&q=80", // Tokyo illustration
+  "https://images.unsplash.com/photo-1619983088625-6a3a0c0b6f5c?auto=format&fit=crop&w=1920&q=80", // Brazil art
+  "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=1920&q=80"  // India illustrated city
 ];
 
 let i = 0;
-bg.style.background = backgrounds[0];
+bg.style.backgroundImage = `url(${backgrounds[0]})`;
 
 setInterval(() => {
   scenes[i].classList.remove('active');
+  bg.style.opacity = 0;
+
   i = (i + 1) % scenes.length;
-  scenes[i].classList.add('active');
-  bg.style.background = backgrounds[i % backgrounds.length];
-}, 850); // PERFECTLY SYNCED
+
+  setTimeout(() => {
+    scenes[i].classList.add('active');
+    bg.style.backgroundImage = `url(${backgrounds[i % backgrounds.length]})`;
+    bg.style.transform = "scale(1)";
+    bg.style.opacity = 1;
+  }, 180);
+
+}, 850);
 </script>
 
 </body>
