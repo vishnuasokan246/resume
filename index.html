@@ -1,124 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Intro</title>
+  <meta charset="UTF-8" />
+  <title>Cinematic Intro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
 
-<style>
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:Poppins, sans-serif;
-  background:black;
-}
+    body {
+      overflow: hidden;
+      background: black;
+    }
 
-#bg{
-  position:fixed;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  opacity:0;
-  transition:opacity .45s ease;
-}
+    /* Background */
+    #intro-bg {
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: opacity 0.4s ease-in-out;
+      z-index: -1;
+    }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(0,0,0,.45));
-  z-index:1;
-}
+    /* Overlay for brightness */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 0;
+    }
 
-.scene{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:clamp(3rem,8vw,8rem);
-  font-weight:700;
-  letter-spacing:.25em;
-  color:white;
-  opacity:0;
-  transform:scale(1.1);
-  transition:opacity .45s ease, transform .45s ease;
-  z-index:2;
-}
+    /* Text */
+    #intro-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4.5rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 2px;
+      opacity: 0;
+      z-index: 1;
+    }
 
-.scene.active{
-  opacity:1;
-  transform:scale(1);
-}
-</style>
+    .animate {
+      animation: textAnim 0.8s ease-in-out forwards;
+    }
+
+    @keyframes textAnim {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+      }
+      40% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div id="bg"></div>
-<div class="overlay"></div>
+  <div id="intro-bg"></div>
+  <div id="overlay"></div>
+  <div id="intro-text"></div>
 
-<div class="scene active">Hi</div>
-<div class="scene">Bonjour</div>
-<div class="scene">Hola</div>
-<div class="scene">Konnichiwa</div>
-<div class="scene">Ola</div>
-<div class="scene">Namaste</div>
-<div class="scene">Ola</div>
-<div class="scene">Konnichiwa</div>
-<div class="scene">Hola</div>
-<div class="scene">Bonjour</div>
-<div class="scene">Hi</div>
+  <script>
+    const SLIDE_DURATION = 800; // 🔥 speed (text + bg synced)
 
-<script>
-const scenes = document.querySelectorAll('.scene');
-const bg = document.getElementById('bg');
+    const slides = [
+      { text: "Hi", bg: "images/hi_art.jpg" },
+      { text: "Bonjour", bg: "images/paris_art.jpg" },
+      { text: "Hola", bg: "images/madrid_art.jpg" },
+      { text: "Konnichiwa", bg: "images/tokyo_art.jpg" },
+      { text: "Ola", bg: "images/rio_art.jpg" },
+      { text: "Namaste", bg: "images/india_art.jpg" },
+      { text: "Ola", bg: "images/rio_art.jpg" },
+      { text: "Konnichiwa", bg: "images/tokyo_art.jpg" },
+      { text: "Hola", bg: "images/madrid_art.jpg" },
+      { text: "Bonjour", bg: "images/paris_art.jpg" },
+      { text: "Hi", bg: "images/hi_art.jpg" }
+    ];
 
-const data = [
-  "https://images.unsplash.com/photo-1618005210498-31f9c6f8b0b1",
-  "https://images.unsplash.com/photo-1619983081593-e2ba5b543168",
-  "https://images.unsplash.com/photo-1619983090163-7c7c86f51d52",
-  "https://images.unsplash.com/photo-1622737133809-d95047b9e673",
-  "https://images.unsplash.com/photo-1619983088625-6a3a0c0b6f5c",
-  "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f"
-];
+    const textEl = document.getElementById("intro-text");
+    const bgEl = document.getElementById("intro-bg");
 
-// 🔥 PRELOAD EVERYTHING FIRST
-let loaded = 0;
-const images = [];
+    let index = 0;
 
-data.forEach((src,i)=>{
-  const img = new Image();
-  img.src = src + "?auto=format&fit=crop&w=1920&q=80";
-  img.onload = () => {
-    loaded++;
-    if(loaded === data.length) start();
-  };
-  images.push(img);
-});
+    function playSlide() {
+      const slide = slides[index];
 
-let index = 0;
+      // background swap (clean)
+      bgEl.style.opacity = "0";
+      setTimeout(() => {
+        bgEl.style.backgroundImage = `url(${slide.bg})`;
+        bgEl.style.opacity = "1";
+      }, 200);
 
-function start(){
-  bg.style.backgroundImage = `url(${images[0].src})`;
-  bg.style.opacity = 1;
+      // reset animation safely
+      textEl.classList.remove("animate");
+      void textEl.offsetWidth; // 🚨 critical: prevents freeze
+      textEl.textContent = slide.text;
+      textEl.classList.add("animate");
 
-  setInterval(()=>{
-    scenes[index].classList.remove("active");
-    bg.style.opacity = 0;
+      index = (index + 1) % slides.length;
+    }
 
-    index = (index + 1) % scenes.length;
-
-    setTimeout(()=>{
-      scenes[index].classList.add("active");
-      bg.style.backgroundImage = `url(${images[index % images.length].src})`;
-      bg.style.opacity = 1;
-    },200);
-
-  },850);
-}
-</script>
+    // start immediately like video
+    playSlide();
+    setInterval(playSlide, SLIDE_DURATION);
+  </script>
 
 </body>
 </html>
