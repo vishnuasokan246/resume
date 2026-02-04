@@ -1,72 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Intro</title>
+<meta charset="UTF-8" />
+<title>Vishnu Asokan | Portfolio Intro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-* {
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   font-family: "Poppins", sans-serif;
 }
 
-body {
-  overflow: hidden;
-  background: black;
-}
-
-/* BACKGROUND */
 #bg {
   position: fixed;
   inset: 0;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transition: opacity 0.45s ease-in-out;
-  z-index: -1;
+  transition: opacity 0.6s ease, transform 1.4s ease;
+  transform: scale(1.08);
 }
 
-/* DARK OVERLAY */
 #overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.3);
-  z-index: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.25),
+    rgba(0,0,0,0.45)
+  );
 }
 
-/* TEXT */
 #text {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 4.5rem;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(3rem, 8vw, 7rem);
   font-weight: 700;
-  color: white;
-  letter-spacing: 2px;
+  color: #ffffff;
+  letter-spacing: 3px;
+  text-transform: capitalize;
   opacity: 0;
-  z-index: 1;
+  transform: translateY(40px);
 }
 
 .animate {
-  animation: textAnim 0.8s ease-in-out forwards;
+  animation: textIn 0.9s ease forwards;
 }
 
-@keyframes textAnim {
+@keyframes textIn {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-  40% {
-    opacity: 1;
+    transform: translateY(40px);
   }
   100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
@@ -79,49 +73,47 @@ body {
 <div id="text"></div>
 
 <script>
-const SLIDE_DURATION = 850;
-
 const slides = [
-  { text: "Hi", bg: "https://images.unsplash.com/photo-1534081333815-ae5019106622" },          // Global city art
+  { text: "Hi", bg: "https://images.unsplash.com/photo-1494526585095-c41746248156" },          // New York
   { text: "Bonjour", bg: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34" },    // Paris
-  { text: "Hola", bg: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad" },        // Spain
+  { text: "Hola", bg: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad" },       // Spain
   { text: "Konnichiwa", bg: "https://images.unsplash.com/photo-1549693578-d683be217e58" },    // Tokyo
-  { text: "Ola", bg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" },         // Brazil
-  { text: "Namaste", bg: "https://images.unsplash.com/photo-1587474260584-136574528ed5" },     // India
-  { text: "Ola", bg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" },
-  { text: "Konnichiwa", bg: "https://images.unsplash.com/photo-1549693578-d683be217e58" },
-  { text: "Hola", bg: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad" },
-  { text: "Bonjour", bg: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34" },
-  { text: "Hi", bg: "https://images.unsplash.com/photo-1534081333815-ae5019106622" }
+  { text: "Ola", bg: "https://images.unsplash.com/photo-1526401485004-2fda9f4a4b90" },         // Rio
+  { text: "Namaste", bg: "https://images.unsplash.com/photo-1587474260584-136574528ed5" },    // India art city
+  { text: "Ola", bg: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade" },        // Lisbon
+  { text: "Konnichiwa", bg: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26" }, // Japan city
+  { text: "Hola", bg: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba" },       // Barcelona
+  { text: "Bonjour", bg: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a" },   // Paris alt
+  { text: "Hi", bg: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d" }          // City lights
 ];
 
-const textEl = document.getElementById("text");
-const bgEl = document.getElementById("bg");
+const bg = document.getElementById("bg");
+const text = document.getElementById("text");
 
 let index = 0;
+const SPEED = 850;
 
 function playSlide() {
   const slide = slides[index];
 
-  // background
-  bgEl.style.opacity = "0";
+  bg.style.opacity = 0;
   setTimeout(() => {
-    bgEl.style.backgroundImage = `url(${slide.bg}?auto=format&fit=crop&w=1920&q=80)`;
-    bgEl.style.opacity = "1";
+    bg.style.backgroundImage =
+      `url(${slide.bg}?auto=format&fit=crop&w=1920&q=80)`;
+    bg.style.opacity = 1;
+    bg.style.transform = "scale(1)";
   }, 200);
 
-  // text animation reset
-  textEl.classList.remove("animate");
-  void textEl.offsetWidth;
-  textEl.textContent = slide.text;
-  textEl.classList.add("animate");
+  text.classList.remove("animate");
+  void text.offsetWidth;
+  text.textContent = slide.text;
+  text.classList.add("animate");
 
   index = (index + 1) % slides.length;
 }
 
-// start like a video
 playSlide();
-setInterval(playSlide, SLIDE_DURATION);
+setInterval(playSlide, SPEED);
 </script>
 
 </body>
