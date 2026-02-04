@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cinematic Intro</title>
 
 <style>
 html,body{
   margin:0;
-  padding:0;
   width:100%;
   height:100%;
   overflow:hidden;
-  font-family:'Poppins',sans-serif;
+  font-family:Poppins, sans-serif;
   background:black;
 }
 
@@ -21,19 +20,14 @@ html,body{
   inset:0;
   background-size:cover;
   background-position:center;
-  transform:scale(1.08);
-  transition:opacity .35s ease, transform .85s ease;
-  opacity:1;
+  opacity:0;
+  transition:opacity .45s ease;
 }
 
 .overlay{
   position:fixed;
   inset:0;
-  background:linear-gradient(
-    to bottom,
-    rgba(0,0,0,.12),
-    rgba(0,0,0,.45)
-  );
+  background:linear-gradient(to bottom,rgba(0,0,0,.15),rgba(0,0,0,.45));
   z-index:1;
 }
 
@@ -48,7 +42,7 @@ html,body{
   letter-spacing:.25em;
   color:white;
   opacity:0;
-  transform:scale(1.12);
+  transform:scale(1.1);
   transition:opacity .45s ease, transform .45s ease;
   z-index:2;
 }
@@ -81,33 +75,49 @@ html,body{
 const scenes = document.querySelectorAll('.scene');
 const bg = document.getElementById('bg');
 
-/* Illustrated / painted city art only */
-const backgrounds = [
-  "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=1920&q=80", // Global city illustration
-  "https://images.unsplash.com/photo-1619983081593-e2ba5b543168?auto=format&fit=crop&w=1920&q=80", // Paris art
-  "https://images.unsplash.com/photo-1619983090163-7c7c86f51d52?auto=format&fit=crop&w=1920&q=80", // Spain art
-  "https://images.unsplash.com/photo-1622737133809-d95047b9e673?auto=format&fit=crop&w=1920&q=80", // Tokyo illustration
-  "https://images.unsplash.com/photo-1619983088625-6a3a0c0b6f5c?auto=format&fit=crop&w=1920&q=80", // Brazil art
-  "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=1920&q=80"  // India illustrated city
+const data = [
+  "https://images.unsplash.com/photo-1618005210498-31f9c6f8b0b1",
+  "https://images.unsplash.com/photo-1619983081593-e2ba5b543168",
+  "https://images.unsplash.com/photo-1619983090163-7c7c86f51d52",
+  "https://images.unsplash.com/photo-1622737133809-d95047b9e673",
+  "https://images.unsplash.com/photo-1619983088625-6a3a0c0b6f5c",
+  "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f"
 ];
 
-let i = 0;
-bg.style.backgroundImage = `url(${backgrounds[0]})`;
+// 🔥 PRELOAD EVERYTHING FIRST
+let loaded = 0;
+const images = [];
 
-setInterval(() => {
-  scenes[i].classList.remove('active');
-  bg.style.opacity = 0;
+data.forEach((src,i)=>{
+  const img = new Image();
+  img.src = src + "?auto=format&fit=crop&w=1920&q=80";
+  img.onload = () => {
+    loaded++;
+    if(loaded === data.length) start();
+  };
+  images.push(img);
+});
 
-  i = (i + 1) % scenes.length;
+let index = 0;
 
-  setTimeout(() => {
-    scenes[i].classList.add('active');
-    bg.style.backgroundImage = `url(${backgrounds[i % backgrounds.length]})`;
-    bg.style.transform = "scale(1)";
-    bg.style.opacity = 1;
-  }, 180);
+function start(){
+  bg.style.backgroundImage = `url(${images[0].src})`;
+  bg.style.opacity = 1;
 
-}, 850);
+  setInterval(()=>{
+    scenes[index].classList.remove("active");
+    bg.style.opacity = 0;
+
+    index = (index + 1) % scenes.length;
+
+    setTimeout(()=>{
+      scenes[index].classList.add("active");
+      bg.style.backgroundImage = `url(${images[index % images.length].src})`;
+      bg.style.opacity = 1;
+    },200);
+
+  },850);
+}
 </script>
 
 </body>
