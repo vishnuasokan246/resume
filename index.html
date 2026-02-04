@@ -24,7 +24,7 @@ html, body {
   background-repeat: no-repeat;
   filter: brightness(1.2) saturate(1.5);
   transform: scale(1.08);
-  transition: background-image 0.6s ease, transform 0.6s ease;
+  transition: background-image 0.4s ease, transform 0.4s ease;
 }
 
 .overlay {
@@ -99,8 +99,9 @@ setInterval(() => {
   i = (i + 1) % scenes.length;
   scenes[i].classList.add('active');
   bg.style.backgroundImage = `url(${data[i % data.length].bg})`;
-}, 700);
+}, 850);
 </script>
 
 </body>
 </html
+
