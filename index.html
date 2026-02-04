@@ -2,129 +2,135 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Vishnu Asokan | Cinematic 3D Portfolio</title>
+<title>Vishnu Asokan | Cinematic Portfolio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-html,body{
-  margin:0;
-  padding:0;
-  overflow:hidden;
-  background:#000;
-}
+html,body{margin:0;overflow:hidden;background:#000}
 #overlay{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-family:Segoe UI,sans-serif;
-  font-size:2.5rem;
-  letter-spacing:2px;
-  pointer-events:none;
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-family:Segoe UI,sans-serif;
+  font-size:2.6rem;letter-spacing:2px;
+  text-align:center;pointer-events:none;
   transition:opacity 1s;
 }
-.fadeOut{opacity:0}
+.fade{opacity:0}
 #hint{
-  position:fixed;
-  bottom:40px;
-  width:100%;
-  text-align:center;
-  color:#aaa;
-  font-size:1rem;
+  position:fixed;bottom:30px;width:100%;
+  text-align:center;color:#aaa;font-size:1rem;
 }
 </style>
 </head>
 
 <body>
-
 <div id="overlay">WELCOME TO A NEW WORLD</div>
-<div id="hint">Click / Tap to move forward</div>
+<div id="hint">Click / Tap to continue</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
 <script>
+/* SCENE */
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x000000, 10, 80);
+scene.fog = new THREE.Fog(0x000000,10,120);
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
+const camera = new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,1000);
 camera.position.set(0,2,20);
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-/* LIGHTS */
-scene.add(new THREE.AmbientLight(0x404040,1));
+/* POST PROCESSING (BLOOM) */
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene,camera));
+const bloom = new THREE.UnrealBloomPass(
+  new THREE.Vector2(innerWidth,innerHeight),
+  0.9,0.6,0.2
+);
+composer.addPass(bloom);
 
-const neonLight = new THREE.PointLight(0xff2a6d,2,50);
-neonLight.position.set(0,10,10);
-scene.add(neonLight);
+/* LIGHTS */
+scene.add(new THREE.AmbientLight(0x404040,1.2));
+const neonColors=[0xff2a6d,0x00f0ff,0xffb703];
+neonColors.forEach((c,i)=>{
+  const l=new THREE.PointLight(c,2,80);
+  l.position.set((i-1)*10,8,10);
+  scene.add(l);
+});
 
 /* CITY */
-function createBuilding(x,z,h,color){
-  const geo = new THREE.BoxGeometry(2,h,2);
-  const mat = new THREE.MeshStandardMaterial({color});
-  const b = new THREE.Mesh(geo,mat);
+function building(x,z,h,color){
+  const g=new THREE.BoxGeometry(2,h,2);
+  const m=new THREE.MeshStandardMaterial({color});
+  const b=new THREE.Mesh(g,m);
   b.position.set(x,h/2,z);
   scene.add(b);
 }
-
-for(let z=-10; z>-200; z-=6){
-  for(let x=-12; x<=12; x+=6){
-    createBuilding(
-      x,
-      z,
-      Math.random()*10+4,
-      Math.random()>0.7 ? 0x00f0ff : 0x111111
+for(let z=-10;z>-300;z-=6){
+  for(let x=-15;x<=15;x+=6){
+    building(
+      x,z,
+      Math.random()*12+5,
+      Math.random()>0.6?neonColors[Math.floor(Math.random()*3)]:0x111111
     );
   }
 }
 
+/* CAMERA PATH */
+const curve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(0,2,20),
+  new THREE.Vector3(0,3,0),
+  new THREE.Vector3(5,4,-40),
+  new THREE.Vector3(-5,3,-80),
+  new THREE.Vector3(0,4,-140),
+  new THREE.Vector3(0,5,-220)
+]);
+let t=0;
+
 /* TEXT SCENES */
-const scenes = [
+const texts=[
   "WELCOME TO A NEW WORLD",
   "VISHNU ASOKAN",
   "FRONTEND DEVELOPER",
   "BCA • KOSHYS INSTITUTE (2022–2025)",
-  "BUILDING DIGITAL EXPERIENCES",
+  "BUILDING MODERN WEB EXPERIENCES",
   "CONTACT: vishnuasokan236@gmail.com"
 ];
-let sceneIndex = 0;
+let index=0;
+const overlay=document.getElementById("overlay");
 
-/* CLICK CONTROL */
-window.addEventListener("click", ()=>{
-  camera.position.z -= 15;
-  document.getElementById("overlay").classList.add("fadeOut");
-
+/* CLICK */
+addEventListener("click",()=>{
+  t+=0.15;
+  overlay.classList.add("fade");
   setTimeout(()=>{
-    sceneIndex = (sceneIndex+1) % scenes.length;
-    const o = document.getElementById("overlay");
-    o.innerText = scenes[sceneIndex];
-    o.classList.remove("fadeOut");
-  },1000);
+    index=Math.min(index+1,texts.length-1);
+    overlay.innerText=texts[index];
+    overlay.classList.remove("fade");
+  },900);
 });
 
-/* ANIMATE */
+/* LOOP */
 function animate(){
   requestAnimationFrame(animate);
-  renderer.render(scene,camera);
+  t=Math.min(t,1);
+  camera.position.copy(curve.getPointAt(t));
+  camera.lookAt(curve.getPointAt(Math.min(t+0.02,1)));
+  composer.render();
 }
 animate();
 
-window.addEventListener("resize", ()=>{
-  camera.aspect = window.innerWidth/window.innerHeight;
+/* RESIZE */
+addEventListener("resize",()=>{
+  camera.aspect=innerWidth/innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(innerWidth,innerHeight);
+  composer.setSize(innerWidth,innerHeight);
 });
 </script>
-
 </body>
 </html>
