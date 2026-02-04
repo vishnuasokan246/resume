@@ -14,22 +14,26 @@ html, body {
   font-family: "Poppins", sans-serif;
 }
 
-#bg {
-  position: fixed;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  transition: opacity 0.6s ease;
+body {
+  background: linear-gradient(120deg, #ff6a00, #ee0979, #00c6ff);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite;
 }
 
-#overlay {
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#city {
   position: fixed;
-  inset: 0;
-  background: linear-gradient(
-    rgba(0,0,0,0.25),
-    rgba(0,0,0,0.45)
-  );
+  bottom: 0;
+  width: 100%;
+  height: 45%;
+  background: url("https://svgshare.com/i/14hZ.svg") repeat-x bottom;
+  background-size: contain;
+  opacity: 0.9;
 }
 
 #text {
@@ -47,10 +51,10 @@ html, body {
 }
 
 .show {
-  animation: textAnim 0.6s ease forwards;
+  animation: textIn 0.6s ease forwards;
 }
 
-@keyframes textAnim {
+@keyframes textIn {
   to {
     opacity: 1;
     transform: translateY(0);
@@ -61,49 +65,39 @@ html, body {
 
 <body>
 
-<div id="bg"></div>
-<div id="overlay"></div>
 <div id="text"></div>
+<div id="city"></div>
 
 <script>
-const slides = [
-  { text: "Hi", bg: "https://images.unsplash.com/photo-1494526585095-c41746248156" }, // NYC buildings
-  { text: "Bonjour", bg: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34" }, // Paris city
-  { text: "Hola", bg: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad" }, // Spain city
-  { text: "Konnichiwa", bg: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26" }, // Tokyo city
-  { text: "Ola", bg: "https://images.unsplash.com/photo-1526401485004-2fda9f4a4b90" }, // Rio city
-  { text: "Namaste", bg: "https://images.unsplash.com/photo-1587474260584-136574528ed5" }, // Indian city art
-  { text: "Ola", bg: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade" }, // Lisbon buildings
-  { text: "Konnichiwa", bg: "https://images.unsplash.com/photo-1549693578-d683be217e58" }, // Japan city
-  { text: "Hola", bg: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba" }, // Barcelona
-  { text: "Bonjour", bg: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a" }, // Paris wide
-  { text: "Hi", bg: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d" } // city lights
+const words = [
+  "Hi",
+  "Bonjour",
+  "Hola",
+  "Konnichiwa",
+  "Ola",
+  "Namaste",
+  "Ola",
+  "Konnichiwa",
+  "Hola",
+  "Bonjour",
+  "Hi"
 ];
 
-const bg = document.getElementById("bg");
 const text = document.getElementById("text");
-
 let i = 0;
-const SPEED = 750; // 🔥 perfectly synced
+const SPEED = 700;
 
-function showSlide() {
-  bg.style.opacity = 0;
+function play() {
   text.classList.remove("show");
-
   setTimeout(() => {
-    bg.style.backgroundImage =
-      `url(${slides[i].bg}?auto=format&fit=crop&w=1920&q=80)`;
-    bg.style.opacity = 1;
-
-    text.textContent = slides[i].text;
+    text.textContent = words[i];
     text.classList.add("show");
-
-    i = (i + 1) % slides.length;
-  }, 150);
+    i = (i + 1) % words.length;
+  }, 120);
 }
 
-showSlide();
-setInterval(showSlide, SPEED);
+play();
+setInterval(play, SPEED);
 </script>
 
 </body>
